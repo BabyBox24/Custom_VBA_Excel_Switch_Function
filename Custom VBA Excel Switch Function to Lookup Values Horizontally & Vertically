@@ -1,0 +1,39 @@
+Function CustomSwitch(expression As Variant, values As Range, results As Range) As Variant
+    Dim i As Integer
+    Dim valuesArray As Variant
+    Dim resultsArray As Variant
+    Dim valuesIsRow As Boolean
+    Dim resultsIsRow As Boolean
+    
+    ' Check if the number of cells in values and results are the same
+    If values.Count <> results.Count Then
+        CustomSwitch = CVErr(xlErrValue)
+        Exit Function
+    End If
+    
+    ' Determine if values and results are in rows or columns
+    valuesIsRow = (values.Columns.Count > 1)
+    resultsIsRow = (results.Columns.Count > 1)
+    
+    ' Convert ranges to arrays for faster processing
+    valuesArray = values.Value
+    resultsArray = results.Value
+    
+    ' Loop through the values to find a match
+    For i = 1 To Application.Max(UBound(valuesArray, 1), UBound(valuesArray, 2))
+        If valuesIsRow Then
+            If expression = valuesArray(1, i) Then
+                CustomSwitch = resultsArray(1, i)
+                Exit Function
+            End If
+        Else
+            If expression = valuesArray(i, 1) Then
+                CustomSwitch = resultsArray(i, 1)
+                Exit Function
+            End If
+        End If
+    Next i
+    
+    ' If no match is found, return an error
+    CustomSwitch = CVErr(xlErrNA)
+End Function
